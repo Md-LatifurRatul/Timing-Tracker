@@ -13,6 +13,10 @@ abstract class AuthBase {
   Future<void> signOut();
   Future<FirebaseUser?> signInWithGoogle();
   Future<FirebaseUser?> signInWithFacebook();
+  Future<FirebaseUser?> signInWithEmailAndPassword(
+      String email, String password);
+  Future<FirebaseUser?> createUserWithEmailAndPassword(
+      String email, String password);
   Stream<FirebaseUser?> get authStateChanges;
 }
 
@@ -105,6 +109,22 @@ class Auth implements AuthBase {
       throw FirebaseAuthException(
           code: "FACEBOOK_UNKNOWN_ERROR", message: "An unknown error occurred");
     }
+  }
+
+  @override
+  Future<FirebaseUser?> signInWithEmailAndPassword(
+      String email, String password) async {
+    final authResult = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
+    return _userFromFirebase(authResult.user);
+  }
+
+  @override
+  Future<FirebaseUser?> createUserWithEmailAndPassword(
+      String email, String password) async {
+    final authResult = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email, password: password);
+    return _userFromFirebase(authResult.user);
   }
 
   @override

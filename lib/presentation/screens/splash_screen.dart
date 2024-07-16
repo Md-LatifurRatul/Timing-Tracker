@@ -37,21 +37,23 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Column(
-        children: [
-          AppLogo(),
-          SizedBox(
-            height: 20,
-          ),
-          CircularProgressIndicator(),
-          SizedBox(
-            height: 12,
-          ),
-          Text(
-            "Version 1.1.0",
-            style: TextStyle(color: Colors.blue),
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            AppLogo(),
+            SizedBox(
+              height: 20,
+            ),
+            CircularProgressIndicator(),
+            SizedBox(
+              height: 12,
+            ),
+            Text(
+              "Version 1.1.0",
+              style: TextStyle(color: Colors.blue),
+            ),
+          ],
+        ),
       ),
     );
   }

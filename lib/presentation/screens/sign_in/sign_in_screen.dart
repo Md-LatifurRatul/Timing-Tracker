@@ -89,7 +89,9 @@ class SignInScreen extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
                   fullscreenDialog: true,
-                  builder: (context) => const EmailSignInScreen()));
+                  builder: (context) => EmailSignInScreen(
+                        auth: auth,
+                      )));
             },
           ),
           const SizedBox(
