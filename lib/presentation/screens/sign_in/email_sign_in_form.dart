@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:time_tracker_app/data/services/auth.dart';
 import 'package:time_tracker_app/presentation/screens/sign_in/validators.dart';
+import 'package:time_tracker_app/presentation/widgets/platform_alert_dialogue.dart';
 
 enum EmailSignInFormType { signIn, register }
 
@@ -62,6 +63,14 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
       }
     } catch (e) {
       print(e.toString());
+      if (!mounted) {
+        return;
+      }
+      PlatformAlertDialogue(
+        title: 'Sign in failed',
+        content: e.toString(),
+        defaultActionText: 'OK',
+      ).show(context);
     } finally {
       setState(() {
         _isLoading = false;
