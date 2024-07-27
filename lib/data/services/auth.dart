@@ -10,9 +10,9 @@ class FirebaseUser {
 abstract class AuthBase {
   Future<FirebaseUser?> checkCurrentUser();
   Future<FirebaseUser?> signInAnonymously();
-  Future<void> signOut();
   Future<FirebaseUser?> signInWithGoogle();
   Future<FirebaseUser?> signInWithFacebook();
+  Future<void> signOut();
   Future<FirebaseUser?> signInWithEmailAndPassword(
       String email, String password);
   Future<FirebaseUser?> createUserWithEmailAndPassword(

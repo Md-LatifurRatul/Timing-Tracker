@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:time_tracker_app/data/services/auth.dart';
 import 'package:time_tracker_app/presentation/screens/sign_in/landing_screen.dart';
 import 'package:time_tracker_app/presentation/widgets/app_logo.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key, required this.auth});
-
-  final AuthBase auth;
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -27,11 +24,11 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => LandingScreen(
-                  auth: widget.auth,
-                )));
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LandingScreen(),
+      ),
+    );
   }
 
   @override

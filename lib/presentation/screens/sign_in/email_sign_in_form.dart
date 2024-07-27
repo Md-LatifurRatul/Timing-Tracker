@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker_app/data/services/auth.dart';
 import 'package:time_tracker_app/presentation/screens/sign_in/validators.dart';
-import 'package:time_tracker_app/presentation/widgets/platform_alert_dialogue.dart';
+import 'package:time_tracker_app/presentation/widgets/plat_form_exception_alert_dialogue.dart';
 
 enum EmailSignInFormType { signIn, register }
 
 class EmailSignInForm extends StatefulWidget with EmailAndPasswordValidators {
-  EmailSignInForm({super.key, required this.auth});
-  final AuthBase auth;
+  EmailSignInForm({super.key});
 
   @override
   State<EmailSignInForm> createState() => _EmailSignInFormState();
@@ -53,23 +54,23 @@ class _EmailSignInFormState extends State<EmailSignInForm> {
     });
 
     try {
+      final auth = Provider.of<AuthBase>(context);
       if (_formType == EmailSignInFormType.signIn) {
-        await widget.auth.signInWithEmailAndPassword(_email, _password);
+        await auth.signInWithEmailAndPassword(_email, _password);
       } else {
-        await widget.auth.createUserWithEmailAndPassword(_email, _password);
+        await auth.createUserWithEmailAndPassword(_email, _password);
       }
       if (mounted) {
         Navigator.of(context).pop();
       }
-    } catch (e) {
-      print(e.toString());
+    } on PlatformException catch (e) {
+      // print(e.toString());
       if (!mounted) {
         return;
       }
-      PlatformAlertDialogue(
+      PlatFormExceptionAlertDialogue(
+        exeption: e,
         title: 'Sign in failed',
-        content: e.toString(),
-        defaultActionText: 'OK',
       ).show(context);
     } finally {
       setState(() {

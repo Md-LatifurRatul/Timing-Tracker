@@ -7,20 +7,20 @@ class SocialSignInButton extends StatelessWidget {
       required this.text,
       required this.color,
       this.textColor = Colors.black87,
-      required this.onPressed,
+      this.onPressed,
       required this.assests});
 
   final String text;
   final Color color;
   final Color textColor;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String assests;
 
   @override
   Widget build(BuildContext context) {
     return CustomElevatedButton(
       color: color,
-      onPressed: onPressed,
+      onPressed: onPressed ?? () {},
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

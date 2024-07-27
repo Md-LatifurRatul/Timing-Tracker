@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:time_tracker_app/data/services/auth.dart';
 import 'package:time_tracker_app/presentation/widgets/platform_alert_dialogue.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key, required this.auth});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
-  final AuthBase auth;
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
 
-  Future<void> _signOut() async {
+class _HomeScreenState extends State<HomeScreen> {
+  Future<void> _signOut(BuildContext context) async {
+    final auth = Provider.of<AuthBase>(context, listen: false);
     try {
       await auth.signOut();
     } catch (e) {
@@ -15,15 +20,16 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _confirmSignOut(BuildContext context) async {
+  Future<void> _confirmSignOut() async {
     final didRequestSignOut = await const PlatformAlertDialogue(
       title: 'Logout',
       content: 'Are you sure that you want to logout?',
       defaultActionText: 'Logout',
     ).show(context);
-
     if (didRequestSignOut == true) {
-      _signOut();
+      if (mounted) {
+        _signOut(context);
+      }
     }
   }
 
@@ -34,7 +40,9 @@ class HomeScreen extends StatelessWidget {
         title: const Text("Home Page"),
         actions: [
           OutlinedButton(
-            onPressed: () => _confirmSignOut(context),
+            onPressed: () {
+              _confirmSignOut();
+            },
             child: const Text(
               "Logout",
               style: TextStyle(

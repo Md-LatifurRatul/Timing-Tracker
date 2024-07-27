@@ -23,6 +23,7 @@ class CustomElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
+          disabledBackgroundColor: color,
           textStyle:
               const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
           shape: RoundedRectangleBorder(
