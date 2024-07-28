@@ -49,6 +49,8 @@ class SignInScreen extends StatelessWidget {
 
         _showSignInError(context, e);
       }
+    } catch (e) {
+      print('Sign in aborted: $e');
     }
   }
 
