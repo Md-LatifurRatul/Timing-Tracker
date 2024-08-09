@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:time_tracker_app/presentation/screens/sign_in/landing_screen.dart';
+import 'package:time_tracker_app/presentation/screens/landing_screen.dart';
 import 'package:time_tracker_app/presentation/widgets/app_logo.dart';
 
 class SplashScreen extends StatefulWidget {

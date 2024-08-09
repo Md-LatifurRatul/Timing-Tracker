@@ -12,7 +12,15 @@ class PlatFormExceptionAlertDialogue extends PlatformAlertDialogue {
         );
 
   static String _message(PlatformException exeption) {
-    return _errors[exeption.code] ?? exeption.message ?? '';
+    print(exeption);
+    if (exeption.message == 'FIRFirestoreErrorDomain') {
+      if (exeption.code == 'Error 7') {
+        return 'Missing or insufficient permission';
+      }
+    }
+    return _errors[exeption.code] ??
+        exeption.message ??
+        'An Unknown error occured';
   }
 
   static final Map<String, String> _errors = {

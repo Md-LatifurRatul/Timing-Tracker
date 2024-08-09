@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -114,9 +115,19 @@ class Auth implements AuthBase {
   @override
   Future<FirebaseUser?> signInWithEmailAndPassword(
       String email, String password) async {
-    final authResult = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
-    return _userFromFirebase(authResult.user);
+    try {
+      UserCredential userCredential =
+          await _firebaseAuth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return _userFromFirebase(userCredential.user);
+    } on FirebaseAuthException catch (e) {
+      throw PlatformException(code: e.code, message: e.message);
+    } catch (e) {
+      throw PlatformException(
+          code: 'ERROR_UNKNOWN', message: 'An unknown error occurred.');
+    }
   }
 
   @override

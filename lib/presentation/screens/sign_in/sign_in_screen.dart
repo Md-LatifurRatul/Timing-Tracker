@@ -3,65 +3,82 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker_app/data/services/auth.dart';
 import 'package:time_tracker_app/presentation/screens/sign_in/email_sign_in_screen.dart';
-import 'package:time_tracker_app/presentation/state_holders/sign_in_bloc_controller.dart';
+import 'package:time_tracker_app/presentation/state_holders/sign_in_controller.dart';
 import 'package:time_tracker_app/presentation/utility/assets_path.dart';
 import 'package:time_tracker_app/presentation/widgets/plat_form_exception_alert_dialogue.dart';
 import 'package:time_tracker_app/presentation/widgets/sign_in_button_widget.dart';
 import 'package:time_tracker_app/presentation/widgets/social_sign_in_button.dart';
 
-class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key, required this.signInBloc});
-  final SignInBlocController signInBloc;
+class SignInScreen extends StatefulWidget {
+  const SignInScreen(
+      {super.key, required this.signInController, required this.isLoading});
+  final SignInController signInController;
+
+  final bool isLoading;
 
   static Widget create(BuildContext context) {
     final auth = Provider.of<AuthBase>(context, listen: false);
-    return Provider<SignInBlocController>(
-      create: (_) => SignInBlocController(auth: auth),
-      dispose: (context, bloc) => bloc.dispose(),
-      child: Consumer<SignInBlocController>(
-        builder: (context, signInBloc, _) => SignInScreen(
-          signInBloc: signInBloc,
+    return ChangeNotifierProvider<ValueNotifier<bool>>(
+      create: (_) => ValueNotifier<bool>(false),
+      child: Consumer<ValueNotifier<bool>>(
+        builder: (_, isLoading, __) => Provider<SignInController>(
+          create: (_) => SignInController(auth: auth, isLoading: isLoading),
+          child: Consumer<SignInController>(
+            builder: (context, signInController, _) => SignInScreen(
+              signInController: signInController,
+              isLoading: isLoading.value,
+            ),
+          ),
         ),
       ),
     );
   }
 
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
   void _showSignInError(BuildContext context, PlatformException exeption) {
     PlatFormExceptionAlertDialogue(title: 'Sign in failed', exeption: exeption)
         .show(context);
   }
 
-  Future<void> _signInAnonymously(BuildContext context) async {
+  Future<void> _signInAnonymously() async {
     try {
-      await signInBloc.signInAnonymously();
+      await widget.signInController.signInAnonymously();
     } on PlatformException catch (e) {
       // print(e.toString());
-      _showSignInError(context, e);
+      if (mounted) {
+        _showSignInError(context, e);
+      }
     }
   }
 
-  Future<void> _signInWithGoogle(BuildContext context) async {
+  Future<void> _signInWithGoogle() async {
     try {
-      await signInBloc.signInWithGoogle();
+      await widget.signInController.signInWithGoogle();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         // print(e.toString());
-
-        _showSignInError(context, e);
+        if (mounted) {
+          _showSignInError(context, e);
+        }
       }
     } catch (e) {
       print('Sign in aborted: $e');
     }
   }
 
-  Future<void> _signInWithFacebook(BuildContext context) async {
+  Future<void> _signInWithFacebook() async {
     try {
-      await signInBloc.signInWithFacebook();
+      await widget.signInController.signInWithFacebook();
     } on PlatformException catch (e) {
       if (e.code != 'ERROR_ABORTED_BY_USER') {
         // print(e.toString());
-
-        _showSignInError(context, e);
+        if (mounted) {
+          _showSignInError(context, e);
+        }
       }
     }
   }
@@ -72,18 +89,12 @@ class SignInScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Time Tracker APP"),
       ),
-      body: StreamBuilder<bool>(
-        stream: signInBloc.isLoadingStream,
-        initialData: false,
-        builder: (context, snapshot) {
-          return _buildContent(context, snapshot.data!);
-        },
-      ),
+      body: _buildContent(context),
       backgroundColor: Colors.grey[200],
     );
   }
 
-  Widget _buildContent(BuildContext context, bool isLoading) {
+  Widget _buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -92,7 +103,7 @@ class SignInScreen extends StatelessWidget {
         children: [
           SizedBox(
             height: 40,
-            child: _buildHeading(isLoading),
+            child: _buildHeading(),
           ),
           const SizedBox(
             height: 40,
@@ -101,7 +112,7 @@ class SignInScreen extends StatelessWidget {
             assests: AssetsPath.googleLogoPng,
             text: "Sign in with Google",
             color: Colors.white,
-            onPressed: isLoading ? null : () => _signInWithGoogle(context),
+            onPressed: widget.isLoading ? null : () => _signInWithGoogle(),
           ),
           const SizedBox(
             height: 8,
@@ -111,7 +122,7 @@ class SignInScreen extends StatelessWidget {
             text: 'Sign in with Facebook',
             color: const Color(0xFF334D92),
             textColor: Colors.white,
-            onPressed: isLoading ? null : () => _signInWithFacebook(context),
+            onPressed: widget.isLoading ? null : () => _signInWithFacebook(),
           ),
           const SizedBox(
             height: 8,
@@ -120,7 +131,7 @@ class SignInScreen extends StatelessWidget {
             text: 'Sign in with email',
             color: Colors.teal,
             textColor: Colors.white,
-            onPressed: isLoading
+            onPressed: widget.isLoading
                 ? null
                 : () {
                     Navigator.of(context).push(
@@ -150,15 +161,15 @@ class SignInScreen extends StatelessWidget {
             text: 'Go anonymous',
             color: Colors.lime,
             textColor: Colors.black,
-            onPressed: isLoading ? null : () => _signInAnonymously(context),
+            onPressed: widget.isLoading ? null : () => _signInAnonymously(),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildHeading(bool isLoading) {
-    if (isLoading) {
+  Widget _buildHeading() {
+    if (widget.isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
       );

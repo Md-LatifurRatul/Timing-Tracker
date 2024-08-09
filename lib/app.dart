@@ -15,26 +15,29 @@ class TimeTracker extends StatelessWidget {
         title: 'Time Tracker APP',
         home: const SplashScreen(),
         theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-            centerTitle: true,
-            elevation: 2,
-            backgroundColor: Colors.indigo,
-            titleTextStyle: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          primarySwatch: Colors.indigo,
-          outlinedButtonTheme: OutlinedButtonThemeData(
-            style: OutlinedButton.styleFrom(
-              backgroundColor: Colors.blueAccent,
-              minimumSize: const Size(60, 40),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(12),
+            appBarTheme: const AppBarTheme(
+              centerTitle: true,
+              elevation: 2,
+              backgroundColor: Colors.indigo,
+              titleTextStyle: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+            primarySwatch: Colors.indigo,
+            outlinedButtonTheme: OutlinedButtonThemeData(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: Colors.blueAccent,
+                minimumSize: const Size(60, 40),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(12),
+                  ),
                 ),
               ),
             ),
-          ),
-        ),
+            floatingActionButtonTheme: const FloatingActionButtonThemeData(
+              backgroundColor: Colors.indigo,
+              foregroundColor: Colors.white,
+            )),
       ),
     );
   }

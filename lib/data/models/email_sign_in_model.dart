@@ -1,4 +1,4 @@
-import 'package:time_tracker_app/presentation/screens/sign_in/validators.dart';
+import 'package:time_tracker_app/presentation/widgets/validators.dart';
 
 enum EmailSignInFormType { signIn, register }
 
@@ -15,7 +15,6 @@ class EmailSignInModel with EmailAndPasswordValidators {
   final EmailSignInFormType formType;
   final bool isLoading;
   final bool submitted;
-  // final bool isPasswordVisible;
 
   String get primaryText {
     return formType == EmailSignInFormType.signIn
@@ -61,6 +60,5 @@ class EmailSignInModel with EmailAndPasswordValidators {
         formType: formType ?? this.formType,
         isLoading: isLoading ?? this.isLoading,
         submitted: submitted ?? this.submitted);
-    //  isPasswordVisible: isPasswordVisible ?? this.isPasswordVisible);
   }
 }
