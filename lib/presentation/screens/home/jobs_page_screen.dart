@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:time_tracker_app/data/models/job.dart';
 import 'package:time_tracker_app/data/services/auth.dart';
 import 'package:time_tracker_app/data/services/database.dart';
+import 'package:time_tracker_app/presentation/screens/home/jobs/edit_job_page.dart';
+import 'package:time_tracker_app/presentation/screens/home/jobs/job_list_items_builder.dart';
+import 'package:time_tracker_app/presentation/widgets/job_list_tile.dart';
 import 'package:time_tracker_app/presentation/widgets/plat_form_exception_alert_dialogue.dart';
 import 'package:time_tracker_app/presentation/widgets/platform_alert_dialogue.dart';
 
@@ -37,13 +40,13 @@ class _JobsPageScreenState extends State<JobsPageScreen> {
     }
   }
 
-  Future<void> _createJob() async {
+  Future<void> _deleteJob(Job job) async {
     try {
       final database = Provider.of<Database>(context, listen: false);
-      await database.createJob(Job(name: 'Blogging', ratePerHour: 10));
+      await database.deleteJob(job);
     } on PlatformException catch (e) {
       if (mounted) {
-        PlatFormExceptionAlertDialogue(title: 'Operation Failed', exeption: e)
+        PlatFormExceptionAlertDialogue(title: 'Delete Failed', exeption: e)
             .show(context);
       }
     }
@@ -74,7 +77,7 @@ class _JobsPageScreenState extends State<JobsPageScreen> {
       ),
       body: _buildContents(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _createJob,
+        onPressed: () => EditJobPage.showJobPage(context),
         child: const Icon(Icons.add),
       ),
     );
@@ -86,23 +89,20 @@ class _JobsPageScreenState extends State<JobsPageScreen> {
     return StreamBuilder<List<Job>>(
       stream: database.jobsStream(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final jobs = snapshot.data ?? [];
-          final children = jobs.map((job) => Text(job.name)).toList();
-
-          return ListView(
-            children: children,
-          );
-        }
-
-        if (snapshot.hasError) {
-          return const Center(
-            child: Text('Some Error occurred'),
-          );
-        }
-
-        return const Center(
-          child: CircularProgressIndicator(),
+        return JobListItemsBuilder<Job>(
+          snapshot: snapshot,
+          itemBuilder: (context, job) => Dismissible(
+            background: Container(
+              color: Colors.red,
+            ),
+            onDismissed: (direction) => _deleteJob(job),
+            key: Key('job-${job.id}'),
+            direction: DismissDirection.endToStart,
+            child: JobListTile(
+              job: job,
+              onTap: () => EditJobPage.showJobPage(context, job: job),
+            ),
+          ),
         );
       },
     );
