@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:time_tracker_app/data/models/job.dart';
 import 'package:time_tracker_app/data/services/auth.dart';
 import 'package:time_tracker_app/data/services/database.dart';
+import 'package:time_tracker_app/presentation/screens/home/job_entries/job_entries_page.dart';
 import 'package:time_tracker_app/presentation/screens/home/jobs/edit_job_page.dart';
 import 'package:time_tracker_app/presentation/screens/home/jobs/job_list_items_builder.dart';
 import 'package:time_tracker_app/presentation/widgets/job_list_tile.dart';
@@ -77,7 +78,8 @@ class _JobsPageScreenState extends State<JobsPageScreen> {
       ),
       body: _buildContents(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => EditJobPage.showJobPage(context),
+        onPressed: () => EditJobPage.showJobPage(context,
+            database: Provider.of<Database>(context, listen: false)),
         child: const Icon(Icons.add),
       ),
     );
@@ -100,7 +102,7 @@ class _JobsPageScreenState extends State<JobsPageScreen> {
             direction: DismissDirection.endToStart,
             child: JobListTile(
               job: job,
-              onTap: () => EditJobPage.showJobPage(context, job: job),
+              onTap: () => JobEntriesPage.showJobEntriesPage(context, job),
             ),
           ),
         );

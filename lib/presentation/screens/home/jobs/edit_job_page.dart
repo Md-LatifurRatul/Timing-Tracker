@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import 'package:time_tracker_app/data/models/job.dart';
 import 'package:time_tracker_app/data/services/database.dart';
 import 'package:time_tracker_app/presentation/widgets/plat_form_exception_alert_dialogue.dart';
@@ -13,15 +12,16 @@ class EditJobPage extends StatefulWidget {
 
   final Job? job;
 
-  static Future<void> showJobPage(BuildContext context, {Job? job}) async {
-    final database = Provider.of<Database>(context, listen: false);
-
-    await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => EditJobPage(
-              database: database,
-              job: job,
-            ),
-        fullscreenDialog: true));
+  static Future<void> showJobPage(BuildContext context,
+      {required Database database, Job? job}) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+          builder: (context) => EditJobPage(
+                database: database,
+                job: job,
+              ),
+          fullscreenDialog: true),
+    );
   }
 
   @override
@@ -73,8 +73,6 @@ class _EditJobPageState extends State<EditJobPage> {
             defaultActionText: 'OK',
           ).show(context);
         } else {
-          String documentIdFromCurrentDate() =>
-              DateTime.now().toIso8601String();
           final id = widget.job?.id ?? documentIdFromCurrentDate();
           //print("Form Saved, name: $_name, ratPerHour: $_ratePerHour");
           final job = Job(id: id, name: _name!, ratePerHour: _ratePerHour!);
