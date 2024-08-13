@@ -2,14 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker_app/data/models/job.dart';
-import 'package:time_tracker_app/data/services/auth.dart';
 import 'package:time_tracker_app/data/services/database.dart';
 import 'package:time_tracker_app/presentation/screens/home/job_entries/job_entries_page.dart';
 import 'package:time_tracker_app/presentation/screens/home/jobs/edit_job_page.dart';
 import 'package:time_tracker_app/presentation/screens/home/jobs/job_list_items_builder.dart';
 import 'package:time_tracker_app/presentation/widgets/job_list_tile.dart';
 import 'package:time_tracker_app/presentation/widgets/plat_form_exception_alert_dialogue.dart';
-import 'package:time_tracker_app/presentation/widgets/platform_alert_dialogue.dart';
 
 class JobsPageScreen extends StatefulWidget {
   const JobsPageScreen({super.key});
@@ -19,28 +17,6 @@ class JobsPageScreen extends StatefulWidget {
 }
 
 class _JobsPageScreenState extends State<JobsPageScreen> {
-  Future<void> _signOut(BuildContext context) async {
-    final auth = Provider.of<AuthBase>(context, listen: false);
-    try {
-      await auth.signOut();
-    } catch (e) {
-      print(e.toString());
-    }
-  }
-
-  Future<void> _confirmSignOut() async {
-    final didRequestSignOut = await const PlatformAlertDialogue(
-      title: 'Logout',
-      content: 'Are you sure that you want to logout?',
-      defaultActionText: 'Logout',
-    ).show(context);
-    if (didRequestSignOut == true) {
-      if (mounted) {
-        _signOut(context);
-      }
-    }
-  }
-
   Future<void> _deleteJob(Job job) async {
     try {
       final database = Provider.of<Database>(context, listen: false);
@@ -62,26 +38,16 @@ class _JobsPageScreenState extends State<JobsPageScreen> {
       appBar: AppBar(
         title: const Text("Jobs"),
         actions: [
-          OutlinedButton(
-            onPressed: () {
-              _confirmSignOut();
-            },
-            child: const Text(
-              "Logout",
-              style: TextStyle(
+          IconButton(
+              onPressed: () => EditJobPage.showJobPage(context,
+                  database: Provider.of<Database>(context, listen: false)),
+              icon: const Icon(
+                Icons.add,
                 color: Colors.white,
-                fontSize: 16,
-              ),
-            ),
-          ),
+              )),
         ],
       ),
       body: _buildContents(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => EditJobPage.showJobPage(context,
-            database: Provider.of<Database>(context, listen: false)),
-        child: const Icon(Icons.add),
-      ),
     );
   }
 

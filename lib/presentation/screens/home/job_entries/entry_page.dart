@@ -21,7 +21,7 @@ class EntryPage extends StatefulWidget {
     required Job job,
     Entry? entry,
   }) async {
-    await Navigator.of(context).push(
+    await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
         builder: (context) =>
             EntryPage(job: job, entry: entry, database: database),
@@ -70,12 +70,17 @@ class _EntryPageState extends State<EntryPage> {
         comment: _comment);
   }
 
-  Future<void> _setEntryAndDismiss(BuildContext context) async {
+  Future<void> _setEntryAndDismiss() async {
     try {
       final entry = _entryFromState();
       await widget.database.setEntry(entry);
-      Navigator.of(context).pop();
+      if (mounted) {
+        Navigator.of(context).pop();
+      }
     } on PlatformException catch (e) {
+      if (!mounted) {
+        return;
+      }
       PlatFormExceptionAlertDialogue(title: 'Operation failed', exeption: e)
           .show(context);
     }
@@ -89,7 +94,7 @@ class _EntryPageState extends State<EntryPage> {
         title: Text(widget.job.name),
         actions: [
           TextButton(
-            onPressed: () => _setEntryAndDismiss(context),
+            onPressed: () => _setEntryAndDismiss(),
             child: Text(
               widget.entry != null ? 'Update' : 'Create',
               style: const TextStyle(fontSize: 18, color: Colors.white),

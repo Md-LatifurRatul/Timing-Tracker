@@ -17,7 +17,7 @@ class JobEntriesPage extends StatelessWidget {
 
   static Future<void> showJobEntriesPage(BuildContext context, Job job) async {
     final Database database = Provider.of<Database>(context, listen: false);
-    await Navigator.of(context).push(
+    await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
         fullscreenDialog: false,
         builder: (context) => JobEntriesPage(database: database, job: job),
@@ -38,27 +38,58 @@ class JobEntriesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 2.0,
-        title: Text(job.name),
-        actions: [
-          TextButton(
-            child: const Text(
-              'Edit',
-              style: TextStyle(fontSize: 18.0, color: Colors.white),
+    return StreamBuilder<Job>(
+      stream: database.jobStream(jobId: job.id),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final job = snapshot.data!;
+          final jobName = job.name;
+
+          return Scaffold(
+            appBar: AppBar(
+              elevation: 2.0,
+              title: Text(jobName),
+              centerTitle: true,
+              actions: [
+                IconButton(
+                  icon: const Icon(
+                    Icons.edit,
+                    color: Colors.white,
+                  ),
+                  onPressed: () => EditJobPage.showJobPage(context,
+                      database: database, job: job),
+                ),
+                IconButton(
+                    icon: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => EntryPage.showEntryPage(
+                        context: context, database: database, job: job)),
+              ],
             ),
-            onPressed: () =>
-                EditJobPage.showJobPage(context, database: database, job: job),
-          ),
-        ],
-      ),
-      body: _buildContent(context, job),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () => EntryPage.showEntryPage(
-            context: context, database: database, job: job),
-      ),
+            body: _buildContent(context, job),
+          );
+        } else if (snapshot.hasError) {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text("Error"),
+            ),
+            body: Center(
+              child: Text('Something went wrong: ${snapshot.error}'),
+            ),
+          );
+        } else {
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text("Loading..."),
+            ),
+            body: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
     );
   }
 
