@@ -16,13 +16,15 @@ class JobListItemsBuilder<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (snapshot.hasData) {
-      final items = snapshot.data ?? [];
+      final items = snapshot.data!;
+      print("Items in snapshot: $items"); // Debugging print
       if (items.isNotEmpty) {
         return _buildListItems(items);
       } else {
         return const EmptyContent();
       }
     } else if (snapshot.hasError) {
+      print("Error in snapshot: ${snapshot.error}"); // Debugging print
       return const EmptyContent(
         title: "Something went wrong",
         message: "Can't load items right now",

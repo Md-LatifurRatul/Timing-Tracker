@@ -47,8 +47,12 @@ class FirestoreDatabase implements Database {
 
   @override
   Stream<List<Job>> jobsStream() => _firestoreService.collectionStream(
-      path: ApiPath.jobs(uid),
-      builder: (data, documentId) => Job.fromMap(data, documentId));
+        path: ApiPath.jobs(uid),
+        builder: (data, documentId) {
+          print("Job fetched: ${data.toString()}"); // Debugging print
+          return Job.fromMap(data, documentId);
+        },
+      );
 
   @override
   Future<void> setEntry(Entry entry) async => await _firestoreService.setData(
