@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:time_tracker_app/data/services/auth.dart';
+import 'package:time_tracker_app/presentation/widgets/avatar_image.dart';
 import 'package:time_tracker_app/presentation/widgets/platform_alert_dialogue.dart';
 
 class AccounPage extends StatelessWidget {
@@ -28,6 +29,7 @@ class AccounPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<FirebaseUser>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Account"),
@@ -45,7 +47,29 @@ class AccounPage extends StatelessWidget {
             ),
           ),
         ],
+        bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(130),
+            child: _buildUserInfo(user)),
       ),
+    );
+  }
+
+  Widget _buildUserInfo(FirebaseUser user) {
+    return Column(
+      children: [
+        AvatarImage(photoUrl: user.photUrl, radius: 50),
+        const SizedBox(
+          height: 10,
+        ),
+        if (user.displayName != null)
+          Text(
+            user.displayName ?? '',
+            style: const TextStyle(color: Colors.white),
+          ),
+        const SizedBox(
+          height: 8,
+        ),
+      ],
     );
   }
 }

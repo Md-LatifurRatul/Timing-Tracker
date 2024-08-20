@@ -1,20 +1,22 @@
 import 'dart:async';
 
+import 'package:rxdart/rxdart.dart';
 import 'package:time_tracker_app/data/models/email_sign_in_model.dart';
 import 'package:time_tracker_app/data/services/auth.dart';
 
 class EmailSignInBlocController {
   final AuthBase auth;
   EmailSignInBlocController({required this.auth});
-  final StreamController<EmailSignInModel> _emailModelController =
-      StreamController<EmailSignInModel>();
 
-  Stream<EmailSignInModel> get emailModelStream => _emailModelController.stream;
+  final _emailModelSubject =
+      BehaviorSubject<EmailSignInModel>.seeded(EmailSignInModel());
 
-  EmailSignInModel _emailSignInModel = EmailSignInModel();
+  Stream<EmailSignInModel> get emailModelStream => _emailModelSubject.stream;
+
+  EmailSignInModel get _emailSignInModel => _emailModelSubject.value;
 
   void dispose() {
-    _emailModelController.close();
+    _emailModelSubject.close();
   }
 
   Future<void> emailSignInSubmit() async {
@@ -57,13 +59,12 @@ class EmailSignInBlocController {
     bool? isLoading,
     bool? submitted,
   }) {
-    _emailSignInModel = _emailSignInModel.copyWith(
+    _emailModelSubject.value = _emailSignInModel.copyWith(
       email: email,
       password: password,
       formType: formType,
       isLoading: isLoading,
       submitted: submitted,
     );
-    _emailModelController.add(_emailSignInModel);
   }
 }
